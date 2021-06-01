@@ -1,0 +1,22 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-benchmark
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: redis-benchmark
+  template:
+    metadata:
+      labels:
+        app: redis-benchmark
+    spec:
+      nodeSelector:
+        type: client
+      containers:
+      - name: redis
+        image: redis:6.2.2
+        command: ["redis-benchmark"]
+        args: ["--cluster", "-h", "redis-cluster", "-d", "1024", "-c", "50", "-n", "10000000", "-t", "get,set"]
