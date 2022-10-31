@@ -47,6 +47,26 @@ meaningful to other cache configurations unless similarly defined there.
       <scheme-name>near-${coherence.client direct}</scheme-name>
     </cache-mapping>
     <cache-mapping>
+      <cache-name>safe-*</cache-name>
+      <scheme-name>safe-${coherence.client direct}</scheme-name>
+    </cache-mapping>
+    <cache-mapping>
+      <cache-name>concurrent-*</cache-name>
+      <scheme-name>concurrent-${coherence.client direct}</scheme-name>
+    </cache-mapping>
+    <cache-mapping>
+      <cache-name>rj-*</cache-name>
+      <scheme-name>rj-${coherence.client direct}</scheme-name>
+    </cache-mapping>
+    <cache-mapping>
+      <cache-name>fj-*</cache-name>
+      <scheme-name>fj-${coherence.client direct}</scheme-name>
+    </cache-mapping>
+    <cache-mapping>
+      <cache-name>cm-*</cache-name>
+      <scheme-name>cm-${coherence.client direct}</scheme-name>
+    </cache-mapping>
+    <cache-mapping>
       <cache-name>*</cache-name>
       <scheme-name>thin-${coherence.client direct}</scheme-name>
     </cache-mapping>
@@ -94,16 +114,126 @@ meaningful to other cache configurations unless similarly defined there.
       <autostart>false</autostart>
     </distributed-scheme>
 
+    <!-- partitioned caching scheme for clustered clients -->
+    <distributed-scheme>
+      <scheme-name>safe-direct</scheme-name>
+      <scheme-ref>safe-server</scheme-ref>
+      <local-storage system-property="coherence.distributed.localstorage">false</local-storage>
+      <autostart>false</autostart>
+    </distributed-scheme>
+
+    <!-- partitioned caching scheme for clustered clients -->
+    <distributed-scheme>
+      <scheme-name>concurrent-direct</scheme-name>
+      <scheme-ref>concurrent-server</scheme-ref>
+      <local-storage system-property="coherence.distributed.localstorage">false</local-storage>
+      <autostart>false</autostart>
+    </distributed-scheme>
+
+    <!-- partitioned caching scheme for clustered clients -->
+    <distributed-scheme>
+      <scheme-name>rj-direct</scheme-name>
+      <scheme-ref>rj-server</scheme-ref>
+      <local-storage system-property="coherence.distributed.localstorage">false</local-storage>
+      <autostart>false</autostart>
+    </distributed-scheme>
+
+    <!-- partitioned caching scheme for clustered clients -->
+    <distributed-scheme>
+      <scheme-name>fj-direct</scheme-name>
+      <scheme-ref>fj-server</scheme-ref>
+      <local-storage system-property="coherence.distributed.localstorage">false</local-storage>
+      <autostart>false</autostart>
+    </distributed-scheme>
+
+    <!-- partitioned caching scheme for clustered clients -->
+    <distributed-scheme>
+      <scheme-name>cm-direct</scheme-name>
+      <scheme-ref>cm-server</scheme-ref>
+      <local-storage system-property="coherence.distributed.localstorage">false</local-storage>
+      <autostart>false</autostart>
+    </distributed-scheme>
+
     <!-- partitioned caching scheme for servers -->
     <distributed-scheme>
       <scheme-name>server</scheme-name>
-      <service-name>${coherence.service.name PartitionedCache}</service-name>
-<!--      <thread-count-min>4</thread-count-min>-->
+      <service-name>LocalCacheService</service-name>
       <local-storage system-property="coherence.distributed.localstorage">true</local-storage>
       <backing-map-scheme>
         <local-scheme>
           <unit-calculator>BINARY</unit-calculator>
         </local-scheme>
+      </backing-map-scheme>
+      <autostart>true</autostart>
+      <async-backup system-property="coherence.backup.async">false</async-backup>
+    </distributed-scheme>
+
+    <!-- partitioned caching scheme for servers -->
+    <distributed-scheme>
+      <scheme-name>safe-server</scheme-name>
+      <service-name>SafeHashMapService</service-name>
+      <local-storage system-property="coherence.distributed.localstorage">true</local-storage>
+      <backing-map-scheme>
+        <class-scheme>
+          <class-name>com.tangosol.util.SafeHashMap</class-name>
+        </class-scheme>
+      </backing-map-scheme>
+      <autostart>true</autostart>
+      <async-backup system-property="coherence.backup.async">false</async-backup>
+    </distributed-scheme>
+
+    <!-- partitioned caching scheme for servers -->
+    <distributed-scheme>
+      <scheme-name>concurrent-server</scheme-name>
+      <service-name>ConcurrentMapService</service-name>
+      <local-storage system-property="coherence.distributed.localstorage">true</local-storage>
+      <backing-map-scheme>
+        <class-scheme>
+          <class-name>java.util.concurrent.ConcurrentHashMap</class-name>
+        </class-scheme>
+      </backing-map-scheme>
+      <autostart>true</autostart>
+      <async-backup system-property="coherence.backup.async">false</async-backup>
+    </distributed-scheme>
+
+    <!-- partitioned caching scheme for servers -->
+    <distributed-scheme>
+      <scheme-name>rj-server</scheme-name>
+      <service-name>RamJournalService</service-name>
+      <local-storage system-property="coherence.distributed.localstorage">true</local-storage>
+      <backing-map-scheme>
+        <ramjournal-scheme>
+          <unit-calculator>BINARY</unit-calculator>
+        </ramjournal-scheme>
+      </backing-map-scheme>
+      <autostart>true</autostart>
+      <async-backup system-property="coherence.backup.async">false</async-backup>
+    </distributed-scheme>
+
+    <!-- partitioned caching scheme for servers -->
+    <distributed-scheme>
+      <scheme-name>fj-server</scheme-name>
+      <service-name>FlashJournalService</service-name>
+      <local-storage system-property="coherence.distributed.localstorage">true</local-storage>
+      <backing-map-scheme>
+        <flashjournal-scheme>
+          <unit-calculator>BINARY</unit-calculator>
+        </flashjournal-scheme>
+      </backing-map-scheme>
+      <autostart>true</autostart>
+      <async-backup system-property="coherence.backup.async">false</async-backup>
+    </distributed-scheme>
+
+    <!-- partitioned caching scheme for servers -->
+    <distributed-scheme>
+      <scheme-name>cm-server</scheme-name>
+      <service-name>ChronicleMapService</service-name>
+      <local-storage system-property="coherence.distributed.localstorage">true</local-storage>
+      <backing-map-scheme>
+        <class-scheme>
+          <class-factory-name>coherence.ChronicleMapFactory</class-factory-name>
+          <method-name>create</method-name>
+        </class-scheme>
       </backing-map-scheme>
       <autostart>true</autostart>
       <async-backup system-property="coherence.backup.async">false</async-backup>
